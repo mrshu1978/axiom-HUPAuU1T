@@ -72,7 +72,7 @@ export default class Goomba extends Phaser.Physics.Arcade.Sprite {
     });
   }
 
-  get state() {
+  get enemyState() {
     return this._state;
   }
 }

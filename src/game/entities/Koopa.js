@@ -109,7 +109,7 @@ export default class Koopa extends Phaser.Physics.Arcade.Sprite {
     this.destroy();
   }
 
-  get state() {
+  get enemyState() {
     return this._state;
   }
 
