@@ -333,8 +333,7 @@ console.log('Generating audio...');
 const audioDir = path.join(ROOT, 'public/audio');
 const audioFiles = generateAudio();
 for (const [name, buf] of Object.entries(audioFiles)) {
-  fs.writeFileSync(path.join(audioDir, `${name}.mp3`), buf);
-  fs.writeFileSync(path.join(audioDir, `${name}.ogg`), buf);
+  fs.writeFileSync(path.join(audioDir, `${name}.wav`), buf);
 }
 
 console.log('Generating PWA icons...');

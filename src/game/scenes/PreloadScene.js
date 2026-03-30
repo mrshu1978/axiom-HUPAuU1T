@@ -60,13 +60,10 @@ export default class PreloadScene extends Phaser.Scene {
     // Load tilemap
     this.load.tilemapTiledJSON('world1-1', 'assets/tilemaps/world1-1.json');
 
-    // Load audio files (both .ogg and .mp3 for compatibility)
+    // Load audio files (WAV format — programmatically generated)
     const audioKeys = Object.values(AUDIO_KEYS);
     audioKeys.forEach(key => {
-      this.load.audio(key, [
-        `audio/${key}.ogg`,
-        `audio/${key}.mp3`
-      ]);
+      this.load.audio(key, [`audio/${key}.wav`]);
     });
   }
 
