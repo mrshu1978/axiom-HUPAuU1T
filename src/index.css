@@ -1,0 +1,20 @@
+/* Global CSS reset for game */
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: #0D0D1A;
+  font-family: monospace;
+}
+
+#root {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Ensure canvas is pixelated */
+canvas {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}

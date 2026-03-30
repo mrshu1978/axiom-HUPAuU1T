@@ -147,7 +147,7 @@ export default class Mario extends Phaser.Physics.Arcade.Sprite {
     });
   }
 
-  update(cursors, fireKey) {
+  update(inputState) {
     if (this._isDead) return;
 
     // Update grounded state
@@ -155,10 +155,10 @@ export default class Mario extends Phaser.Physics.Arcade.Sprite {
 
     // Horizontal movement with acceleration
     let accelX = 0;
-    if (cursors.left) {
+    if (inputState.left) {
       accelX = -800;
       this._facingRight = false;
-    } else if (cursors.right) {
+    } else if (inputState.right) {
       accelX = 800;
       this._facingRight = true;
     }
@@ -174,7 +174,7 @@ export default class Mario extends Phaser.Physics.Arcade.Sprite {
     }
 
     // Jump
-    if (cursors.up && this._isGrounded) {
+    if (inputState.jump && this._isGrounded) {
       this.setVelocityY(MARIO_JUMP_VELOCITY);
       this._isGrounded = false;
       EventBus.emit(EVENTS.SCORE_UPDATE, 0); // Jump event for potential scoring

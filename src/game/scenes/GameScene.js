@@ -1,5 +1,6 @@
 import { GAME_WIDTH, GAME_HEIGHT, SCENES, EVENTS, DEPTHS } from '../constants.js';
 import EventBus from '../EventBus.js';
+import InputManager from '../input/InputManager.js';
 import Mario from '../entities/Mario.js';
 import Goomba from '../entities/Goomba.js';
 import Koopa from '../entities/Koopa.js';
@@ -15,6 +16,7 @@ export default class GameScene extends Phaser.Scene {
         this.lives = 3;
         this.score = 0;
         this.coins = 0;
+        this.inputManager = null;
     }
 
     create() {
@@ -75,7 +77,10 @@ export default class GameScene extends Phaser.Scene {
         // 10. Start timer
         this.startTimer();
 
-        // 11. Listen for lives updates
+        // 11. Initialize input manager
+        this.inputManager = new InputManager(this);
+
+        // 12. Listen for lives updates
         EventBus.on(EVENTS.LIVES_UPDATE, this.onLivesUpdate, this);
         EventBus.on(EVENTS.SCORE_UPDATE, this.onScoreUpdate, this);
         EventBus.on(EVENTS.COINS_UPDATE, this.onCoinsUpdate, this);
@@ -181,9 +186,14 @@ export default class GameScene extends Phaser.Scene {
     }
 
     update() {
+        // Update input manager
+        if (this.inputManager) {
+            this.inputManager.update();
+        }
+
         // Update Mario
         if (this.mario && !this.mario._isDead) {
-            this.mario.update(this.input.keyboard.createCursorKeys());
+            this.mario.update(this.inputManager ? this.inputManager.state : this.input.keyboard.createCursorKeys());
         }
 
         // Update enemies
@@ -206,9 +216,12 @@ export default class GameScene extends Phaser.Scene {
             this.mario.die();
         }
 
-        // Check for fire key press
-        if (Phaser.Input.Keyboard.JustDown(this.input.keyboard.addKey('Z'))) {
-            if (this.mario._state === 'fire' && !this.mario._isDead) {
+        // Check for fire key press (from InputManager or keyboard)
+        const firePressed = this.inputManager ? this.inputManager.state.fire :
+                           Phaser.Input.Keyboard.JustDown(this.input.keyboard.addKey('Z'));
+
+        if (firePressed) {
+            if (this.mario && this.mario._state === 'fire' && !this.mario._isDead) {
                 const direction = this.mario.flipX ? -1 : 1;
                 const fireball = new Fireball(this, this.mario.x + (direction * 16), this.mario.y, direction);
                 this.fireballs.add(fireball);
@@ -251,5 +264,11 @@ export default class GameScene extends Phaser.Scene {
         EventBus.off(EVENTS.LIVES_UPDATE, this.onLivesUpdate, this);
         EventBus.off(EVENTS.SCORE_UPDATE, this.onScoreUpdate, this);
         EventBus.off(EVENTS.COINS_UPDATE, this.onCoinsUpdate, this);
+
+        // Clean up input manager
+        if (this.inputManager) {
+            this.inputManager.destroy();
+            this.inputManager = null;
+        }
     }
 }
