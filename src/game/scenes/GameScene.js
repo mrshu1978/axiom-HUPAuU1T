@@ -20,6 +20,8 @@ export default class GameScene extends Phaser.Scene {
     }
 
     create() {
+        this.cameras.main.setBackgroundColor('#5C94FC');
+
         // 1. Load tilemap
         const map = this.make.tilemap({ key: 'world1-1' });
         const tileset = map.addTilesetImage('tiles', 'tiles');
@@ -103,7 +105,7 @@ export default class GameScene extends Phaser.Scene {
     spawnQuestionBlocks(map, platformLayer) {
         // Get tile positions for question blocks (tile ID 3)
         platformLayer.forEachTile(tile => {
-            if (tile.index === 3) {
+            if (tile.index === 4) {
                 const block = new QuestionBlock(this, tile.getCenterX(), tile.getCenterY(), 'coin');
                 this.questionBlocks.add(block);
             }
