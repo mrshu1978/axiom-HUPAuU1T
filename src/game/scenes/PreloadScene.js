@@ -57,8 +57,8 @@ export default class PreloadScene extends Phaser.Scene {
       frameHeight: 8
     });
 
-    // Load tilemap
-    this.load.tilemapTiledJSON('world1-1', 'assets/tilemaps/world1-1.json');
+    // Load tilemap (cache-bust v2)
+    this.load.tilemapTiledJSON('world1-1', 'assets/tilemaps/world1-1.json?v=2');
 
     // Load audio files (WAV format — programmatically generated)
     const audioKeys = Object.values(AUDIO_KEYS);
