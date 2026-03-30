@@ -39,45 +39,21 @@ export class InputManager {
   }
 
   setupTouchEvents() {
-    // Listen for custom events from React touch controls
+    this._touch = { left: false, right: false, jump: false, run: false, fire: false };
+
     window.addEventListener('mario-input', (event) => {
       const { action, pressed } = event.detail;
-
-      switch (action) {
-        case 'left':
-          this.state.left = pressed;
-          break;
-        case 'right':
-          this.state.right = pressed;
-          break;
-        case 'jump':
-          this.state.jump = pressed;
-          break;
-        case 'run':
-          this.state.run = pressed;
-          break;
-        case 'fire':
-          this.state.fire = pressed;
-          break;
-      }
+      if (action in this._touch) this._touch[action] = pressed;
     });
   }
 
   update() {
-    // Keyboard state
-    this.state.left = this.cursors.left.isDown || this.wasd.left.isDown;
-    this.state.right = this.cursors.right.isDown || this.wasd.right.isDown;
-    this.state.jump = this.cursors.up.isDown || this.wasd.up.isDown || this.spaceKey.isDown;
-    this.state.run = this.shiftKey.isDown;
+    this.state.left = this.cursors.left.isDown || this.wasd.left.isDown || this._touch.left;
+    this.state.right = this.cursors.right.isDown || this.wasd.right.isDown || this._touch.right;
+    this.state.jump = this.cursors.up.isDown || this.wasd.up.isDown || this.spaceKey.isDown || this._touch.jump;
+    this.state.run = this.shiftKey.isDown || this._touch.run;
+    this.state.fire = Phaser.Input.Keyboard.JustDown(this.zKey) || this._touch.fire;
 
-    // Fire button (just pressed, not held)
-    if (Phaser.Input.Keyboard.JustDown(this.zKey)) {
-      this.state.fire = true;
-    } else {
-      this.state.fire = false;
-    }
-
-    // Touch events are already handled via custom events
     return this.state;
   }
 
