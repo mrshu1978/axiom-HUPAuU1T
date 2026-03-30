@@ -1,0 +1,73 @@
+name: Deploy to GitHub Pages
+
+on:
+  # push:
+  #   branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check for package-lock.json
+        id: check-lockfile
+        run: |
+          if [ -f "package-lock.json" ]; then
+            echo "has_lockfile=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_lockfile=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Setup Node (with cache)
+        if: steps.check-lockfile.outputs.has_lockfile == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Setup Node (no cache)
+        if: steps.check-lockfile.outputs.has_lockfile == 'false'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies (with lockfile)
+        if: steps.check-lockfile.outputs.has_lockfile == 'true'
+        run: npm ci
+
+      - name: Install dependencies (no lockfile)
+        if: steps.check-lockfile.outputs.has_lockfile == 'false'
+        run: npm install
+
+      - name: Build
+        run: npm run build
+        env:
+          BASE_URL: /axiom-HUPAuU1T/
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
