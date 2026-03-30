@@ -289,7 +289,7 @@ export default class Mario extends Phaser.Physics.Arcade.Sprite {
     return this._isDead;
   }
 
-  get state() {
+  get marioState() {
     return this._state;
   }
 
