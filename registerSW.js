@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/axiom-HUPAuU1T/sw.js', { scope: '/axiom-HUPAuU1T/' })})}
